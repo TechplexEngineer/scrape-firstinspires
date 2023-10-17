@@ -15,7 +15,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: install deps
-      run: npm ci
+      run: |
+        npm ci
+        npx playwright install
 
     - name: Fetch latest data
       env:
