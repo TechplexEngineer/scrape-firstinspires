@@ -18,4 +18,10 @@ jobs:
       run: npm ci
 
     - name: Fetch latest data
+      env:
+        FIRST_EMAIL:    ${{ secrets.FIRST_EMAIL }}
+        FIRST_PASSWORD: ${{ secrets.FIRST_PASSWORD }}
+        SHEET_ID:       ${{ secrets.SHEET_ID }}
+        SHEETS_EMAIL:   ${{ secrets.SHEETS_EMAIL }}
+        SHEETS_KEY:     ${{ secrets.SHEETS_KEY }}
       run: xvfb-run npm run start
