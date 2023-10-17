@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { chromium } from 'playwright';
 
+import {doc} from './sheets.js';
+
 
 const browser = await chromium.launch({
     headless: false
@@ -26,15 +28,41 @@ await Promise.all([
     await $pwField.press('Enter')
 ]);
 
-const res = await page.evaluate(() => {
+const pageData = await page.evaluate(() => {
     if (! ("ContactRosterModel" in window) ) {
         return;
     }
     // @ts-ignore
-    return ContactRosterModel.TeamStudents;
+    return ContactRosterModel;
+});
+await browser.close()
+
+// console.log('res', JSON.stringify(pageData.TeamStudents, null, 2));
+
+await doc.sheetsByTitle['Team Members'].clear();
+
+const sheet = doc.sheetsByTitle['Team Members'];
+
+await sheet.setHeaderRow(['name_first', 'name_last', 'email', 'phone',
+    "parent_name_first",
+    "parent_name_last",
+    "parent_email",
+    "parent_phone",
+    "ApplicationStatus",
+    "FlagAccepted",
+    "FlagPending",
+    "FlagDenied",
+    "FlagAwardSubmitter",
+    "ConsentReleaseStatus",
+    "flag_applied",
+]);
+
+// freeze header row
+await sheet.updateGridProperties({
+    frozenRowCount: 1,
+    rowCount: sheet.gridProperties.rowCount,
+    columnCount: sheet.gridProperties.columnCount,
 });
 
-console.log('res', res);
+await sheet.addRows(pageData.TeamStudents)
 
-
-await browser.close()

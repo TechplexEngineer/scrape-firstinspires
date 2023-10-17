@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "google-spreadsheet": "^4.1.0",
     "playwright": "^1.39.0"
   },
   "type": "module"
