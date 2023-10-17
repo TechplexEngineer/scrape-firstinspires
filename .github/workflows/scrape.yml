@@ -1,0 +1,21 @@
+name: Scrape latest data
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '12 */1 * * *'
+    # “At minute 10 past every hour.”
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v2
+
+    - name: install deps
+      run: npm ci
+
+    - name: Fetch latest data
+      run: xvfb-run npm run start
