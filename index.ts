@@ -3,6 +3,11 @@ import { chromium } from 'playwright';
 
 import {doc} from './sheets.js';
 
+// function returns a promise to wait for a timeout
+function wait(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 const browser = await chromium.launch({
     headless: false
@@ -35,7 +40,25 @@ const pageData = await page.evaluate(() => {
     // @ts-ignore
     return ContactRosterModel;
 });
-await browser.close()
+
+// await page.pause();
+
+// check if the roster_1 element exists using locator
+const someoneToApprove = await page.isVisible('#roster_1');
+if (someoneToApprove) {
+    console.log('Found student to approve');
+    
+    await page.locator('#roster_1').getByText('Options').click();
+
+    await page.locator('#roster_1').getByText('Approve Membership').click();
+
+    await page.getByRole('button', { name: 'APPROVE' }).click();
+
+    await page.locator('#roster_1').getByText('Application has been accepted!').waitFor();
+} else {
+    console.log('No students to approve');
+}
+await browser.close();
 
 // console.log('res', JSON.stringify(pageData.TeamStudents, null, 2));
 
