@@ -41,6 +41,14 @@ const pageData = await page.evaluate(() => {
     return ContactRosterModel;
 });
 
+const teamContacts = await page.evaluate(() => {
+    if (!("teamContactsModel" in window) ) {
+        return;
+    }
+    // @ts-ignore
+    return teamContactsModel;
+});
+
 // await page.pause();
 
 // check if the roster_1 element exists using locator
@@ -62,30 +70,76 @@ await browser.close();
 
 // console.log('res', JSON.stringify(pageData.TeamStudents, null, 2));
 
-await doc.sheetsByTitle['Team Members'].clear();
 
-const sheet = doc.sheetsByTitle['Team Members'];
 
-await sheet.setHeaderRow(['name_first', 'name_last', 'email', 'phone',
-    "parent_name_first",
-    "parent_name_last",
-    "parent_email",
-    "parent_phone",
-    "ApplicationStatus",
-    "FlagAccepted",
-    "FlagPending",
-    "FlagDenied",
-    "FlagAwardSubmitter",
-    "ConsentReleaseStatus",
-    "flag_applied",
-]);
+// write student data
+{
+    const sheet = doc.sheetsByTitle['Team Members'];
+    
+    await sheet.clear();
 
-// freeze header row
-await sheet.updateGridProperties({
-    frozenRowCount: 1,
-    rowCount: sheet.gridProperties.rowCount,
-    columnCount: sheet.gridProperties.columnCount,
-});
+    await sheet.setHeaderRow(['name_first', 'name_last', 'email', 'phone',
+        "parent_name_first",
+        "parent_name_last",
+        "parent_email",
+        "parent_phone",
+        "ApplicationStatus",
+        "FlagAccepted",
+        "FlagPending",
+        "FlagDenied",
+        "FlagAwardSubmitter",
+        "ConsentReleaseStatus",
+        "flag_applied",
+    ]);
 
-await sheet.addRows(pageData.TeamStudents)
+    // freeze header row
+    await sheet.updateGridProperties({
+        frozenRowCount: 1,
+        rowCount: sheet.gridProperties.rowCount,
+        columnCount: sheet.gridProperties.columnCount,
+    });
+
+    await sheet.addRows(pageData.TeamStudents)
+}
+
+// write mentor data
+{
+    const sheet = doc.sheetsByTitle['Mentors'];
+    
+    await sheet.clear();
+
+    await sheet.setHeaderRow(['name_first', 'name_last', 'email', 'phone',
+        "role_title",
+        "RoleName",
+        "ConsentReleaseStatus",
+        "ypp_screening",
+        "ypp_screening_status",
+        // "incomplete_ypp", // 
+        // "ypp_screening_text"
+    ]);
+
+    // freeze header row
+    await sheet.updateGridProperties({
+        frozenRowCount: 1,
+        rowCount: sheet.gridProperties.rowCount,
+        columnCount: sheet.gridProperties.columnCount,
+    });
+
+    await sheet.addRows(teamContacts.PeopleRoles.filter((p: any) => p.RoleName === "Mentor").map((p: any) => {
+        switch (p.ypp_screening_status) {
+            case "green":
+                p.ypp_screening = "Complete";
+                return p;
+            case "orange":
+                p.ypp_screening = "Not Started";
+                return p;
+            case "blue":
+                p.ypp_screening = "Incomplete";
+                return p;
+            default:
+                p.ypp_screening = "Unknown";
+                return p;
+        }
+    }))
+}
 
