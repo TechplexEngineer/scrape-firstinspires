@@ -99,7 +99,11 @@ await browser.close();
         columnCount: sheet.gridProperties.columnCount,
     });
 
-    await sheet.addRows(pageData.TeamStudents)
+    await sheet.addRows(pageData.TeamStudents.sort((a: any, b: any) => {
+        return a.name_first.localeCompare(b.name_first);
+    }).filter((p:any) => {
+        return p.ApplicationStatus != "Denied";
+    }))
 }
 
 // write mentor data
@@ -140,6 +144,8 @@ await browser.close();
                 p.ypp_screening = "Unknown";
                 return p;
         }
+    }).sort((a: any, b: any) => {
+        return a.name_first.localeCompare(b.name_first);
     }))
 }
 
