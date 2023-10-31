@@ -109,7 +109,7 @@ await browser.close();
     await sheet.clear();
 
     await sheet.setHeaderRow(['name_first', 'name_last', 'email', 'phone',
-        "role_title",
+        // "role_title",
         "RoleName",
         "ConsentReleaseStatus",
         "ypp_screening",
