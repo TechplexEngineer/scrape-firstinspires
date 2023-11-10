@@ -49,24 +49,36 @@ const teamContacts = await page.evaluate(() => {
     return teamContactsModel;
 });
 
-// await page.pause();
-
-// check if the roster_1 element exists using locator
-const someoneToApprove = await page.isVisible('#roster_1');
-if (someoneToApprove) {
-    console.log('Found student to approve');
+try {
+    await page.locator('#roster_1').waitFor({ state: 'visible', timeout: 5_000 });
+} catch (ignore) {
+    console.log('timed out waiting for #roster_1');
     
-    await page.locator('#roster_1').getByText('Options').click();
-
-    await page.locator('#roster_1').getByText('Approve Membership').click();
-
-    await page.getByRole('button', { name: 'APPROVE' }).click();
-
-    await page.locator('#roster_1').getByText('Application has been accepted!').waitFor();
-} else {
-    console.log('No students to approve');
 }
+
+try {
+    // check if the roster_1 element exists using locator
+    const someoneToApprove = await page.locator('#roster_1');
+    if (someoneToApprove) {
+        console.log('Found student to approve');
+        
+        await page.locator('#roster_1').getByText('Options').click();
+
+        await page.locator('#roster_1').getByText('Approve Membership').click();
+
+        await page.getByRole('button', { name: 'APPROVE' }).click();
+
+        await page.getByText('Application has been accepted!').waitFor();
+    } else {
+        console.log('No students to approve');
+    }
+} catch (error) {
+    console.log('error approving', error);
+    
+}
+// await page.pause();
 await browser.close();
+
 
 // console.log('res', JSON.stringify(pageData.TeamStudents, null, 2));
 
