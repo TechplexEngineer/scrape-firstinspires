@@ -51,32 +51,35 @@ const teamContacts = await page.evaluate(() => {
 
 try {
     await page.locator('#roster_1').waitFor({ state: 'visible', timeout: 5_000 });
+
+    try {
+        // check if the roster_1 element exists using locator
+        const someoneToApprove = await page.locator('#sectionPendingApplied #roster_1');
+        // console.log(someoneToApprove, someoneToApprove.length);
+        if (someoneToApprove) {
+            console.log('Found student to approve');
+            
+            await someoneToApprove.getByText('Options').click();
+
+            await someoneToApprove.getByText('Approve Membership').click();
+
+            await page.getByRole('button', { name: 'APPROVE' }).click();
+
+            await page.getByText('Application has been accepted!').waitFor();
+        } else {
+            console.log('No students to approve');
+        }
+    } catch (error) {
+        console.log('error approving', error);
+    }
+
 } catch (ignore) {
     console.log('timed out waiting for #roster_1');
-    
 }
 
-try {
-    // check if the roster_1 element exists using locator
-    const someoneToApprove = await page.locator('#roster_1');
-    if (someoneToApprove) {
-        console.log('Found student to approve');
-        
-        await page.locator('#roster_1').getByText('Options').click();
 
-        await page.locator('#roster_1').getByText('Approve Membership').click();
-
-        await page.getByRole('button', { name: 'APPROVE' }).click();
-
-        await page.getByText('Application has been accepted!').waitFor();
-    } else {
-        console.log('No students to approve');
-    }
-} catch (error) {
-    console.log('error approving', error);
-    
-}
-// await page.pause();
+if (typeof process.env.CI != undefined)
+    await page.pause();
 await browser.close();
 
 
