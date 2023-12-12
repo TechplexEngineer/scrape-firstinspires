@@ -78,8 +78,8 @@ try {
 }
 
 
-if (typeof process.env.CI != undefined)
-    await page.pause();
+// if (typeof process.env.CI != undefined)
+//     await page.pause();
 await browser.close();
 
 
