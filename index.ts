@@ -49,12 +49,15 @@ const teamContacts = await page.evaluate(() => {
     return teamContactsModel;
 });
 
+// await page.pause();
+
 try {
-    await page.locator('#roster_1').waitFor({ state: 'visible', timeout: 5_000 });
+    // check if the roster_1 element exists using locator
+    const someoneToApprove = await page.locator('#sectionPendingApplied #roster_1');
+    await someoneToApprove.waitFor({ timeout: 5_000 });
 
     try {
-        // check if the roster_1 element exists using locator
-        const someoneToApprove = await page.locator('#sectionPendingApplied #roster_1');
+        
         // console.log(someoneToApprove, someoneToApprove.length);
         if (someoneToApprove) {
             console.log('Found student to approve');
