@@ -4,8 +4,8 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    - cron:  '12 */1 * * *'
-    # “At minute 10 past every hour.”
+    - cron:  '12 */3 * * *'
+    # “Runs at 12 minutes past the hour, every 3 hours.”
 
 jobs:
   scheduled:
