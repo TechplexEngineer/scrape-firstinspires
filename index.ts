@@ -54,7 +54,7 @@ const teamContacts = await page.evaluate(() => {
 try {
     // check if the roster_1 element exists using locator
     const someoneToApprove = await page.locator('#sectionPendingApplied #roster_1');
-    await someoneToApprove.waitFor({ timeout: 5_000 });
+    await someoneToApprove.waitFor({ timeout: 5_000, state: "attached" });
 
     try {
         
