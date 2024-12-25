@@ -19,7 +19,7 @@ const context = await browser.newContext();
 // const page = await browser.newPage();
 const page = await context.newPage();
 
-const teamUrl = "https://my.firstinspires.org/Teams//Wizard/TeamContacts/?TeamProfileID=1559922";
+const teamUrl = "https://my.firstinspires.org/Teams//Wizard/TeamContacts/?TeamProfileID=1646278"; // number changes each year
 
 await page.goto(teamUrl);
 
@@ -48,6 +48,8 @@ const teamContacts = await page.evaluate(() => {
     // @ts-ignore
     return teamContactsModel;
 });
+
+console.log("pageData", pageData);
 
 // await page.pause();
 
@@ -122,6 +124,7 @@ await browser.close();
     }).filter((p:any) => {
         return p.ApplicationStatus != "Denied";
     }))
+    console.log("Team Member Data sent to Sheet")
 }
 
 // write mentor data
@@ -165,5 +168,6 @@ await browser.close();
     }).sort((a: any, b: any) => {
         return a.name_first.localeCompare(b.name_first);
     }))
+    console.log("Mentor Data sent to Sheet")
 }
 
